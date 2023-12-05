@@ -1,5 +1,8 @@
+import random
+import statistics
+
 class NPC:
-    stats = { 'str' : 0, 'int' : 0, 'pie' : 0, 'agi' : 0, 'stm' : 0, 'cha' : 0 }
+    stats = {'str': 0, 'int': 0, 'pie': 0, 'agi': 0, 'stm': 0, 'cha': 0}
     level = 0
     hp = 0
     gold = 0
@@ -7,5 +10,53 @@ class NPC:
     copper = 0
 
     def __init__(self):
-        return
-    
+        self.generate_stats()
+        self.generate_level()
+        self.generate_hp()
+        self.generate_wealth()
+
+    def generate_stats(self):
+        self.stats['str'] = sum(random.randint(1, 6) for _ in range(3))
+        self.stats['int'] = sum(random.randint(1, 6) for _ in range(3))
+        self.stats['pie'] = sum(random.randint(1, 6) for _ in range(3))
+        self.stats['agi'] = sum(random.randint(1, 6) for _ in range(3))
+        self.stats['stm'] = sum(random.randint(1, 6) for _ in range(3))
+        self.stats['cha'] = sum(random.randint(1, 6) for _ in range(3))
+
+    def generate_level(self):
+        self.level = random.choices([1, 2, 3, 4], weights=[40, 30, 20, 10])[0]
+
+    def generate_hp(self):
+        self.hp = random.randint(1, 10) * self.level
+
+    def generate_wealth(self):
+        if random.random() < 0.3:
+            self.gold = random.randint(0, 6)
+        elif random.random() < 0.5:
+            self.silver = random.randint(3, 12)
+        elif random.random() < 0.75:
+            self.copper = random.randint(4, 20)
+
+    def get_total_wealth(self):
+        return self.gold * 10 * 10 + self.silver * 10 + self.copper
+
+npcs = [NPC() for _ in range(100)]
+
+level_distribution = {1: 0, 2: 0, 3: 0, 4: 0}
+for npc in npcs:
+    level_distribution[npc.level] += 1
+
+print("Distribution of NPCs by Level:")
+for level, count in level_distribution.items():
+    print(f"Level {level}: {count} NPCs")
+
+hp_values = [npc.hp for npc in npcs]
+wealth_values = [npc.get_total_wealth() for npc in npcs]
+
+print("\nMean and Standard Deviation for HP:")
+print(f"Mean: {round(statistics.mean(hp_values), 2)}")
+print(f"Standard Deviation: {round(statistics.stdev(hp_values), 2)}")
+
+print("\nMean and Standard Deviation for Wealth (in copper):")
+print(f"Mean: {round(statistics.mean(wealth_values), 2)}")
+print(f"Standard Deviation: {round(statistics.stdev(wealth_values), 2)}")
